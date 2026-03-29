@@ -1,20 +1,24 @@
-// ─── Dark mode ─────────────────────────────────────────────────
+// ─── Theme ────────────────────────────────────────────────────────
 
 export const theme = {
   init() {
-    if (localStorage.getItem('neo-dark') === 'true') {
-      document.documentElement.classList.add('dark');
-      document.getElementById('themeToggle').textContent = '☀️ Light';
+    const saved = localStorage.getItem('neo-dark');
+    // default is dark — only switch to light if explicitly saved
+    if (saved === 'false') {
+      document.documentElement.classList.remove('dark');
+      const btn = document.getElementById('themeToggle');
+      if (btn) btn.textContent = '● DARK MODE';
     }
   },
   toggle() {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('neo-dark', String(isDark));
-    document.getElementById('themeToggle').textContent = isDark ? '☀️ Light' : '🌙 Dark';
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = isDark ? '◐ LIGHT MODE' : '● DARK MODE';
   }
 };
 
-// ─── Favorites ─────────────────────────────────────────────────
+// ─── Favorites ────────────────────────────────────────────────────
 
 export const favorites = {
   get() {
@@ -25,7 +29,7 @@ export const favorites = {
     const idx  = favs.indexOf(id);
     idx === -1 ? favs.push(id) : favs.splice(idx, 1);
     localStorage.setItem('neo-favs', JSON.stringify(favs));
-    return idx === -1; // returns true if just added
+    return idx === -1; // true = just added
   },
   has(id) {
     return this.get().includes(id);
