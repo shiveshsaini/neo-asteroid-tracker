@@ -1,48 +1,52 @@
-# Stellar Atlas — Orbital Surveillance Network
+# 🛰️ Stellar Atlas — Orbital Surveillance Network
 
-A sophisticated, ultra-modern Near-Earth Object (NEO) surveillance dashboard powered by the **NASA JPL NeoWs API**. This project tracks asteroids in real-time, mapping out trajectories, velocities, and threat vectors.
+<p align="center">
+  <strong><a href="https://shiveshsaini.github.io/neo-asteroid-tracker">🚀 EXPLORE THE LIVE DEPLOYMENT (DEMO) 🚀</a></strong>
+</p>
+
+A sophisticated, ultra-modern Near-Earth Object (NEO) surveillance dashboard engineered strictly using vanilla JavaScript, HTML5 Canvas, and Tailwind CSS. Powered by the **NASA JPL NeoWs API**, this project tracks asteroids in real-time to analyze trajectories, velocities, and threat vectors.
 
 ![Stellar Atlas Preview](./preview.png) *(Note: Please add screenshot here)*
 
-## 🚀 Features
+---
 
-- **Real-Time Telemetry Data**: Integrates directly with NASA's live orbital tracking algorithms.
-- **Pure Functional Pipeline**: All internal data sorting, searching, and filtering are manipulated using strict array Higher-Order Functions (`.map()`, `.filter()`, `.reduce()`, `.slice()`, `.sort()`). No `for` or `while` loops are used anywhere in the codebase.
-- **"Stellar Atlas" Premium UI**: A highly premium "luxury aerospace" user interface featuring:
-  - Deep obsidian and pearl aesthetics.
-  - Seamless CSS-marquee telemetry tickers.
-  - Smooth staggered cubic-bezier card animations.
-  - "Breathing Gold" tracking highlights for minimum-distance intercept objects.
-- **Search & Filter**: Debounced real-time string matching and threat-level filters securely bound to app state.
-- **Composite Hazard Grading**: Calculates threat levels (0-100) dynamically using proximity, speed, and size differentials.
-- **Favorites System**: Keep track of bookmarked objects via LocalStorage cache.
-- **Sector Scanning**: Effortless week-to-week timeframe shifts via the UI control panel.
-- **1-Click Intelligence Sharing**: Copies structured briefing data directly to your clipboard.
+## ✨ Cutting-Edge Features
+
+- **Google Antigravity Light Theme**: A stunning paradigm shift transitioning from a dark "Obsidian" mission-control UI to a pristine, light "Glassmorphism" interface mimicking cutting-edge conceptual AI Dashboards. Features an animated iridescent color mesh and deep frosted glass (`backdrop-filter`) rendering.
+- **Interactive HTML5 Canvas Particles**: Features a custom-built vanilla JS Canvas engine tracking your mouse movements, spawning theme-contextual, physically drifting, and dissolving glowing trace particles completely independent of UI layering blockages. 
+- **Real-Time Telemetry Data**: Integrates directly with NASA's live tracking algorithms caching optimally in `localStorage`.
+- **Pure Functional Data Pipeline**: All internal arrays (sorting, searching, pagination, filtering) strictly utilize Higher-Order Functions (`.map()`, `.filter()`, `.reduce()`, `.slice()`, `.sort()`). No primitive `for` or `while` loops are ever used.
+- **Composite Hazard Grading**: Calculates combined threat levels (0-100) dynamically using proximity, velocity, and size formulas.
+- **Breathing Closest-Asteroid AI**: A dedicated CSS keyframe animation pulses gently to immediately identify the asteroid closing in at the minimal distance.
+- **Data Modularity (DRY Principle)**: Implements rigorous "Clean Code" conventions cleanly separating Network, Render, Filtering, Memory, and Global App State routines.
 
 ## ⚙️ Technologies
 
-- **HTML5 & CSS3**
+- **HTML5 & CSS3** (Includes strict CSS-Variables for instant theme swapping)
 - **Vanilla JavaScript (ES6 Modules)**
-- **Tailwind CSS** (via CDN for sleek, class-based rapid prototyping)
+- **Tailwind CSS** (via CDN for sleek semantic layouts)
 - **NASA NeoWs API**
 
-## 💡 Functional Programming (HOF) Example
+## 💡 Functional Programming (HOF) Architecture
 
-This application adheres strictly to functional transformation principles (Milestone 3 constraint). Here is how we filter, sort, and paginate the asteroid data without side effects or primitive loops:
+This application rigorously adheres to pristine functional principles. Here is an example isolated out of `js/filters.js` detailing how we extract pagination seamlessly without mutating origin arrays or utilizing primitive iterations:
 
 ```javascript
 export function getFilteredNEOs(allNEOs, { query, filter, sort, page, pageSize }) {
+  // 1. Array Element Verification via Object Keys
   let pipeline = allNEOs.filter(neo => {
     if (filter === 'safe') return !neo.isHazardous;
     if (filter === 'hazardous') return neo.isHazardous;
     return true;
   });
 
+  // 2. Debounced Substring Filtering
   if (query) {
     const q = query.toLowerCase();
     pipeline = pipeline.filter(neo => neo.name.toLowerCase().includes(q));
   }
 
+  // 3. Multi-Tier Destructured Sorting
   pipeline = [...pipeline].sort((a, b) => {
     if (sort === 'distance') return a.distKm - b.distKm;
     if (sort === 'velocity') return b.velocity - a.velocity;
@@ -51,6 +55,7 @@ export function getFilteredNEOs(allNEOs, { query, filter, sort, page, pageSize }
     return 0;
   });
 
+  // 4. Mathematical Array Slicing
   const totalCount = pipeline.length;
   const startIndex = (page - 1) * pageSize;
   const paginated = pipeline.slice(startIndex, startIndex + pageSize);
@@ -59,13 +64,13 @@ export function getFilteredNEOs(allNEOs, { query, filter, sort, page, pageSize }
 }
 ```
 
-## 🛠️ Deployment & Setup
+## 🛠️ Deployment Instructions
 
-This is a fully static client-side application. No node modules or build steps are strictly necessary beyond the integrated CDN scripts.
+Stellar Atlas is a fully static client-side application. No intricate build processes or module bundle resolutions (`node_modules`) are needed.
 
-1. Clone the repository to your local machine.
-2. Open `index.html` in your web browser or serve it using any simple static host (e.g., `python3 -m http.server`, VSCode Live Server).
-3. **Deployment**: Can be deployed seamlessly to platforms like Vercel, Netlify, or GitHub Pages. Just point the publish directory to the project root.
+1. Clone or clone-download the repository to your host instance.
+2. Initialize an HTTP Server against the base directory (`python3 -m http.server 8000` or VSCode Live Server). *NOTE: Due to high-tier `ES6 module ("type=module")` sandboxing, you cannot run this off `file:///` protocols locally.*
+3. **Deployment**: Pushing this directly to **GitHub Pages**, **Vercel**, or **Netlify** requires absolute zero configuration. Ensure that your root routing hits `index.html`.
 
 ---
-*Developed for Milestone 4 Requirements — "Classy Design Specs".*
+*Architected & Redesigned to exceed standard front-end data interaction thresholds.*
