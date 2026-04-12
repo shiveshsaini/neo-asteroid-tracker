@@ -68,22 +68,31 @@
       <span class="text-xs font-mono text-cyan-400 tracking-widest">NASA NEOWS API — REAL TIME DATA</span>
     </div>
 
-    <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight hero-flicker">
+    <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-2 leading-tight hero-flicker">
       ASTEROID<span class="text-cyan-400"> WATCH</span>
     </h1>
+    
+    <p id="dateRangeSubtitle" class="text-xs font-mono text-cyan-400/80 tracking-widest mb-4 hidden">
+      WEEK OF MARCH 22 – MARCH 28, 2026
+    </p>
 
     <p class="text-gray-500 text-sm sm:text-base max-w-lg mx-auto font-mono mb-10 leading-relaxed">
       Tracking near-earth objects in real time.<br/>
       Data sourced directly from NASA JPL.
     </p>
 
+    <!-- Week Navigator & Fetch -->
     <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
       <span class="text-xs font-mono text-gray-600 tracking-widest">START DATE //</span>
-      <input type="date" id="datePicker"
-        class="font-mono text-sm px-4 py-2 rounded border border-cyan-500/30
-               bg-[#050d1a] text-cyan-300
-               focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/30
-               transition-all" />
+      <div class="flex items-center gap-2">
+        <button id="prevWeekBtn" class="px-2 py-2 text-cyan-500 border border-cyan-500/30 rounded hover:bg-cyan-500/10 focus:outline-none transition-colors">←</button>
+        <input type="date" id="datePicker"
+          class="font-mono text-sm px-4 py-2 rounded border border-cyan-500/30
+                 bg-[#050d1a] text-cyan-300
+                 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/30
+                 transition-all" />
+        <button id="nextWeekBtn" class="px-2 py-2 text-cyan-500 border border-cyan-500/30 rounded hover:bg-cyan-500/10 focus:outline-none transition-colors">→</button>
+      </div>
       <button id="fetchBtn"
         class="group relative font-mono text-xs px-6 py-2.5 rounded border border-cyan-500
                text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-300
@@ -113,6 +122,16 @@
         <p class="text-xs font-mono text-cyan-500/50 mt-1">MISS DISTANCE</p>
       </div>
     </div>
+
+    <!-- Mini Stats Ticker -->
+    <div class="ticker-wrap flex items-center bg-[#050d1a]/80 backdrop-blur border border-cyan-500/20 rounded-lg overflow-hidden mt-4 px-4 py-2">
+      <span class="text-cyan-500 text-xs font-mono tracking-widest whitespace-nowrap mr-4 shrink-0">DATA STREAM //</span>
+      <div class="ticker overflow-hidden w-full relative h-[18px]">
+        <div id="statsTickerText" class="ticker-content inline-block whitespace-nowrap font-mono text-xs text-gray-400 animate-scroll">
+          System initializing...
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ═══ ERROR ════════════════════════════════════════════════ -->
@@ -135,16 +154,63 @@
     </p>
   </div>
 
+  <!-- ═══ CONTROLS ════════════════════════════════════════════ -->
+  <section id="controlsArea" class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 mb-6">
+    <div class="flex flex-col xl:flex-row gap-4 items-center justify-between bg-[#050d1a]/80 backdrop-blur border border-cyan-500/20 rounded-xl p-4 pt-5 pb-5">
+      
+      <!-- Search & Filter -->
+      <div class="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+        <div class="relative flex-grow sm:flex-grow-0 sm:min-w-[250px]">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-lg leading-none">⌕</span>
+          <input type="text" id="searchInput" placeholder="Search asteroids... (/ to focus)" 
+                 class="w-full pl-9 pr-3 py-2 bg-[#020409] border border-cyan-500/20 rounded text-sm text-white font-mono focus:outline-none focus:border-cyan-400 transition-colors" />
+        </div>
+        <select id="filterSelect" class="bg-[#020409] border border-cyan-500/20 rounded px-3 py-2 text-sm text-cyan-300 font-mono focus:outline-none focus:border-cyan-400 transition-colors">
+          <option value="all">ALL OBJECTS</option>
+          <option value="safe">SAFE ONLY</option>
+          <option value="hazardous">HAZARDOUS ONLY</option>
+        </select>
+      </div>
+
+      <!-- Sort Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-2 w-full xl:w-auto">
+        <span class="text-xs font-mono text-gray-600 tracking-widest hidden sm:inline-block">SORT BY:</span>
+        <button data-sort="distance" class="sort-btn px-3 py-1.5 text-xs font-mono rounded border border-cyan-500/20 text-gray-400 hover:text-cyan-300 transition-all">DISTANCE</button>
+        <button data-sort="velocity" class="sort-btn px-3 py-1.5 text-xs font-mono rounded border border-cyan-500/20 text-gray-400 hover:text-cyan-300 transition-all">VELOCITY</button>
+        <button data-sort="diameter" class="sort-btn px-3 py-1.5 text-xs font-mono rounded border border-cyan-500/20 text-gray-400 hover:text-cyan-300 transition-all">DIAMETER</button>
+        <button data-sort="name" class="sort-btn px-3 py-1.5 text-xs font-mono rounded border border-cyan-500/20 text-gray-400 hover:text-cyan-300 transition-all">NAME A-Z</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TABS & COUNT ════════════════════════════════════════ -->
+  <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 mb-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+    <div class="flex gap-2 border-b border-cyan-500/20 w-full sm:w-auto">
+      <button data-tab="all" class="tab-btn active px-4 py-2 text-sm font-mono tracking-widest text-cyan-400 border-b-2 border-cyan-400 transition-colors">All Asteroids</button>
+      <button data-tab="saved" class="tab-btn px-4 py-2 text-sm font-mono tracking-widest text-gray-500 hover:text-gray-300 transition-colors">Saved ★ <span id="favCount" class="bg-gray-800 text-gray-300 px-1.5 py-0.5 rounded-full text-[10px] ml-1">0</span></button>
+    </div>
+    <div id="resultCount" class="text-xs font-mono text-gray-500 tracking-wider">
+      Showing 0-0 of 0 asteroids
+    </div>
+  </div>
+
   <!-- ═══ CARDS GRID ════════════════════════════════════════════ -->
   <main id="cardsGrid"
-    class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 pb-20
+    class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 pb-12
            grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
   </main>
+
+  <!-- ═══ PAGINATION ══════════════════════════════════════════ -->
+  <div id="pagination" class="hidden relative z-20 max-w-7xl mx-auto px-4 sm:px-6 mb-12 flex items-center justify-center gap-6">
+    <button id="prevBtn" class="px-5 py-2 text-sm font-mono border border-cyan-500/30 hover:border-cyan-400 rounded text-cyan-400 disabled:opacity-30 disabled:border-gray-700 disabled:hover:border-gray-700 transition-colors tracking-widest">← PREV</button>
+    <span id="pageDisplay" class="text-xs font-mono text-gray-400 tracking-widest">PAGE 1 OF 1</span>
+    <button id="nextBtn" class="px-5 py-2 text-sm font-mono border border-cyan-500/30 hover:border-cyan-400 rounded text-cyan-400 disabled:opacity-30 disabled:border-gray-700 disabled:hover:border-gray-700 transition-colors tracking-widest">NEXT →</button>
+  </div>
 
   <!-- ═══ EMPTY STATE ══════════════════════════════════════════ -->
   <div id="emptyState" class="hidden relative z-20 flex-col items-center justify-center py-32 text-center px-4">
     <div class="font-display text-6xl font-black text-gray-800 mb-4">404</div>
-    <p class="font-mono text-gray-600 text-sm tracking-widest">NO OBJECTS DETECTED IN RANGE</p>
+    <p class="font-mono text-gray-600 text-sm tracking-widest uppercase">NO OBJECTS DETECTED IN RANGE</p>
   </div>
 
   <!-- ═══ FOOTER ════════════════════════════════════════════════ -->

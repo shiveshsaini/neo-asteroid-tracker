@@ -49,10 +49,10 @@ function parseNEOs(data) {
       id:          neo.id,
       name:        neo.name.replace(/[()]/g, '').trim(),
       isHazardous: neo.is_potentially_hazardous_asteroid,
-      diameter:    parseFloat(((
-        neo.estimated_diameter.kilometers.estimated_diameter_min +
-        neo.estimated_diameter.kilometers.estimated_diameter_max
-      ) / 2).toFixed(3)),
+      diameter: parseFloat((
+        (Math.abs(neo.estimated_diameter.kilometers.estimated_diameter_min) +
+        Math.abs(neo.estimated_diameter.kilometers.estimated_diameter_max)) / 2
+        ).toFixed(3)),  
       distKm:      Math.round(parseFloat(neo.close_approach_data[0].miss_distance.kilometers)),
       distLunar:   parseFloat(parseFloat(neo.close_approach_data[0].miss_distance.lunar).toFixed(2)),
       velocity:    parseFloat(parseFloat(neo.close_approach_data[0].relative_velocity.kilometers_per_second).toFixed(2)),
