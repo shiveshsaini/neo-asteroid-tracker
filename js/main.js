@@ -40,9 +40,9 @@ theme.init();
     stars = Array.from({ length: count }, () => ({
       x:       Math.random() * canvas.width,
       y:       Math.random() * canvas.height,
-      r:       Math.random() * 1.2 + 0.2,
+      r:       Math.random() * 0.8 + 0.2,
       alpha:   Math.random(),
-      speed:   Math.random() * 0.003 + 0.001,
+      speed:   Math.random() * 0.002 + 0.0005,
       flicker: Math.random() * Math.PI * 2,
     }));
   }
@@ -51,52 +51,91 @@ theme.init();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     stars.forEach(s => {
       s.flicker += s.speed;
-      const a = 0.3 + Math.abs(Math.sin(s.flicker)) * 0.7;
+      const a = 0.2 + Math.abs(Math.sin(s.flicker)) * 0.6;
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(200, 230, 255, ${a * s.alpha})`;
+      ctx.fillStyle = `rgba(250, 250, 250, ${a * s.alpha})`;
       ctx.fill();
     });
     requestAnimationFrame(draw);
   }
 
   resize();
-  createStars(200);
+  createStars(150);
   draw();
-  window.addEventListener('resize', () => { resize(); createStars(200); });
+  window.addEventListener('resize', () => { resize(); createStars(150); });
 })();
 
-// ─── Global functions ─────────────────────────────────────────────
+// ─── Utility Helpers (DRY Principle) ──────────────────────────────
+
+/**
+ * Returns current dataset with favorites evaluated and tab filters applied.
+ * Prevents repeating the sourceData abstraction logic.
+ */
+function getCurrentSourceData() {
+  const favIds = favorites.get();
+  const withFavs = currentNEOs.map(n => ({ ...n, isFav: favIds.includes(n.id) }));
+  
+  return appState.tab === 'saved' 
+    ? withFavs.filter(neo => neo.isFav)
+    : withFavs;
+}
+
+/**
+ * Shifts the currently active date by a specified number of days and fetches.
+ */
+function shiftDateByDays(days) {
+  const datePicker = document.getElementById('datePicker');
+  const d = new Date(datePicker.value);
+  d.setDate(d.getDate() + days);
+  datePicker.value = d.toISOString().split('T')[0];
+  loadAsteroids(datePicker.value);
+}
+
+/**
+ * Reusable UI button state swapper
+ */
+function updateActiveButton(selector, clickedBtn, activeClasses, inactiveClasses) {
+  document.querySelectorAll(selector).forEach(b => {
+    b.classList.remove(...activeClasses);
+    b.classList.add(...inactiveClasses);
+  });
+  clickedBtn.classList.remove(...inactiveClasses);
+  clickedBtn.classList.add(...activeClasses);
+}
+
+// ─── Global Window Exposed Logic ──────────────────────────────────
 
 /** Toggles an asteroid in favorites */
 window.toggleFav = function(id, btn) {
-  const added = favorites.toggle(id);
-  btn.textContent  = added ? '★ SAVED' : '☆ SAVE';
-  btn.className = btn.className
-    .replace(/border-\S+/g, '')
-    .replace(/text-\S+/g, '')
-    .replace(/bg-\S+/g, '')
-    .trim();
-  if (added) {
-    btn.classList.add('border-yellow-500/50', 'text-yellow-400', 'bg-yellow-500/5');
-  } else {
-    btn.classList.add('border-gray-700', 'text-gray-600',
-                      'hover:border-yellow-500/40', 'hover:text-yellow-400');
-  }
+  favorites.toggle(id);
   updateUI();
 };
 
 /** Shares a card text to clipboard */
 window.shareCard = function(name, dist, date, vel, btn) {
-  const text = \`🚀 Asteroid \${name} will pass Earth at \${dist} km on \${date} at \${vel} km/s. Source: NASA JPL\`;
+  const text = `[STELLAR ATLAS]
+Asteroid: ${name}
+Intercept: ${date}
+Distance: ${dist} km
+Velocity: ${vel} km/s
+Source: NASA JPL`;
+  
   navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.innerHTML;
-    btn.innerHTML = '<span class="text-green-400">✓ COPIED!</span>';
-    setTimeout(() => { btn.innerHTML = orig; }, COPY_RESET_MS);
+    const textSpan = btn.querySelector('.share-text');
+    if(textSpan) {
+        const orig = textSpan.textContent;
+        textSpan.textContent = 'COPIED!';
+        textSpan.classList.add('text-emerald');
+        setTimeout(() => { 
+            textSpan.textContent = orig; 
+            textSpan.classList.remove('text-emerald');
+        }, COPY_RESET_MS);
+    }
   });
 };
 
-// ─── Date picker default ──────────────────────────────────────────
+// ─── Date Formatting ──────────────────────────────────────────────
 
 const datePicker = document.getElementById('datePicker');
 datePicker.value  = getToday();
@@ -106,55 +145,50 @@ function formatWeekRange(startDate) {
   const end = new Date(start);
   end.setDate(end.getDate() + 6);
   
-  const getMonthAndDay = (d) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  const getMonthAndDay = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   const year = end.getFullYear();
-  return \`WEEK OF \${getMonthAndDay(start).toUpperCase()} – \${getMonthAndDay(end).toUpperCase()}, \${year}\`;
+  return `Sector Scan // ${getMonthAndDay(start).toUpperCase()} – ${getMonthAndDay(end).toUpperCase()} ${year}`;
 }
 
-// ─── Update UI core ───────────────────────────────────────────────
+// ─── UI Rendering Core ────────────────────────────────────────────
 
 /** Drives rendering by resolving data through the HOF pipeline */
 function updateUI() {
-  const favIds = favorites.get();
-  const withFavs = currentNEOs.map(n => ({ ...n, isFav: favIds.includes(n.id) }));
-  
-  document.getElementById('favCount').textContent = favIds.length;
-
-  let sourceData = appState.tab === 'saved' 
-    ? withFavs.filter(neo => neo.isFav)
-    : withFavs;
-
+  const sourceData = getCurrentSourceData();
   const { paginated, totalCount } = getFilteredNEOs(sourceData, appState);
   
-  // Stats rendering (using unfiltered but tabbed data for top stats like before)
+  // Fav Tab Count
+  document.getElementById('favCount').textContent = favorites.get().length;
+
+  // Stats Bar (Top)
   const hazardCount = sourceData.filter(n => n.isHazardous).length;
   let closestDistString = '—';
   if (sourceData.length > 0) {
     const closest = sourceData.reduce((a, b) => a.distKm < b.distKm ? a : b);
-    closestDistString = (closest.distKm / 1_000_000).toFixed(2) + 'M km';
+    closestDistString = (closest.distKm / 1_000_000).toFixed(2);
   }
 
   document.getElementById('statTotal').textContent     = sourceData.length;
   document.getElementById('statHazardous').textContent = hazardCount;
   document.getElementById('statClosest').textContent   = closestDistString;
   
-  // Ticker text
-  const tickerData = appState.tab === 'saved' ? sourceData : withFavs;
-  const stats = getStats(tickerData);
-  document.getElementById('statsTickerText').textContent = 
-    \`Total diameter of all NEOs this week: \${stats.totalDiam.toLocaleString(undefined, {maximumFractionDigits:2})} km · Fastest: \${stats.fastest.toLocaleString()} km/s · Average miss distance: \${(stats.avgDist / 1_000_000).toFixed(2)}M km\`;
+  // Ticker Logic
+  const stats = getStats(appState.tab === 'saved' ? sourceData : currentNEOs);
+  const tickerStr = `DIAGNOSTIC TELEMETRY • ACTIVE OBJECTS: ${sourceData.length} • COMBINED MASS PROXY (DIAMETER): ${stats.totalDiam.toLocaleString(undefined, {maximumFractionDigits:2})} km • MAX VELOCITY DEVIATION: ${stats.fastest.toLocaleString()} km/s • MEDIAN SEPARATION: ${(stats.avgDist / 1_000_000).toFixed(2)}M km  •  `;
+  document.getElementById('statsTickerText').textContent = tickerStr + tickerStr;
 
-  // Pagination display
+  // Pagination Display
   const totalPages = getTotalPages(sourceData, appState, PAGE_SIZE);
-  document.getElementById('pageDisplay').textContent = \`PAGE \${appState.page} OF \${totalPages}\`;
+  document.getElementById('pageDisplay').textContent = `${appState.page} / ${totalPages}`;
   document.getElementById('prevBtn').disabled = appState.page <= 1;
   document.getElementById('nextBtn').disabled = appState.page >= totalPages;
 
-  // Result count display
+  // Tracking Counter
   const startItem = totalCount > 0 ? ((appState.page - 1) * PAGE_SIZE) + 1 : 0;
   const endItem = Math.min(appState.page * PAGE_SIZE, totalCount);
-  document.getElementById('resultCount').textContent = \`Showing \${startItem}–\${endItem} of \${totalCount} asteroids\`;
+  document.getElementById('resultCount').textContent = `TRACKING ${startItem}–${endItem} OF ${totalCount} RECORDS`;
 
+  // Render Grid
   renderCards(paginated, {
     isFirstPage: appState.page === 1,
     sortType: appState.sort,
@@ -162,7 +196,7 @@ function updateUI() {
   });
 }
 
-// ─── Load asteroids ───────────────────────────────────────────────
+// ─── Network Loading ──────────────────────────────────────────────
 
 async function loadAsteroids(startDate) {
   currentNEOs = await fetchNEOs(startDate);
@@ -170,37 +204,24 @@ async function loadAsteroids(startDate) {
   const subTitle = document.getElementById('dateRangeSubtitle');
   subTitle.textContent = formatWeekRange(startDate);
   subTitle.classList.remove('hidden');
+  
+  document.getElementById('tickerContainer').classList.remove('hidden');
 
   appState.page = 1;
   updateUI();
 }
 
-// ─── Event listeners ─────────────────────────────────────────────
+// ─── Event Listeners ─────────────────────────────────────────────
 
 document.getElementById('fetchBtn').addEventListener('click', () => {
   if (datePicker.value) loadAsteroids(datePicker.value);
 });
 
-// Week navigator
-document.getElementById('prevWeekBtn').addEventListener('click', () => {
-  const d = new Date(datePicker.value);
-  d.setDate(d.getDate() - 7);
-  datePicker.value = d.toISOString().split('T')[0];
-  loadAsteroids(datePicker.value);
-});
+document.getElementById('prevWeekBtn').addEventListener('click', () => shiftDateByDays(-7));
+document.getElementById('nextWeekBtn').addEventListener('click', () => shiftDateByDays(7));
+document.getElementById('themeToggle').addEventListener('click', () => theme.toggle());
 
-document.getElementById('nextWeekBtn').addEventListener('click', () => {
-  const d = new Date(datePicker.value);
-  d.setDate(d.getDate() + 7);
-  datePicker.value = d.toISOString().split('T')[0];
-  loadAsteroids(datePicker.value);
-});
-
-document.getElementById('themeToggle').addEventListener('click', () => {
-  theme.toggle();
-});
-
-// Search input
+// Search Input (Debounced)
 let debounceTimer;
 const searchInput = document.getElementById('searchInput');
 searchInput.addEventListener('input', (e) => {
@@ -212,7 +233,6 @@ searchInput.addEventListener('input', (e) => {
   }, DEBOUNCE_MS);
 });
 
-// Keyboard shortcut `/` to focus search
 document.addEventListener('keydown', (e) => {
   if (e.key === '/' && document.activeElement !== searchInput) {
     e.preventDefault();
@@ -220,41 +240,34 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Filter
+// Dropdown Filters
 document.getElementById('filterSelect').addEventListener('change', (e) => {
   appState.filter = e.target.value;
   appState.page = 1;
   updateUI();
 });
 
-// Sort
+// Sort Buttons
 document.querySelectorAll('.sort-btn').forEach(btn => {
   btn.addEventListener('click', (e) => {
-    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active', 'border-cyan-400', 'text-cyan-300', 'shadow-[0_0_8px_rgba(34,211,238,0.3)]'));
-    e.target.classList.add('active', 'border-cyan-400', 'text-cyan-300', 'shadow-[0_0_8px_rgba(34,211,238,0.3)]');
+    updateActiveButton('.sort-btn', e.target, ['active', 'bg-white/10', 'text-pearl'], ['text-muted']);
     appState.sort = e.target.getAttribute('data-sort');
     appState.page = 1;
     updateUI();
   });
 });
 
-// Tabs
+// Tab Buttons
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', (e) => {
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.remove('active', 'text-cyan-400', 'border-b-2', 'border-cyan-400');
-      b.classList.add('text-gray-500');
-    });
-    const t = e.currentTarget;
-    t.classList.remove('text-gray-500');
-    t.classList.add('active', 'text-cyan-400', 'border-b-2', 'border-cyan-400');
-    appState.tab = t.getAttribute('data-tab');
+    updateActiveButton('.tab-btn', e.currentTarget, ['active', 'text-pearl'], ['text-muted']);
+    appState.tab = e.currentTarget.getAttribute('data-tab');
     appState.page = 1;
     updateUI();
   });
 });
 
-// Pagination
+// Pagination Connectors
 document.getElementById('prevBtn').addEventListener('click', () => {
   if (appState.page > 1) {
     appState.page--;
@@ -264,9 +277,7 @@ document.getElementById('prevBtn').addEventListener('click', () => {
 });
 
 document.getElementById('nextBtn').addEventListener('click', () => {
-  const favIds = favorites.get();
-  const withFavs = currentNEOs.map(n => ({ ...n, isFav: favIds.includes(n.id) }));
-  let sourceData = appState.tab === 'saved' ? withFavs.filter(neo => neo.isFav) : withFavs;
+  const sourceData = getCurrentSourceData();
   const totalPages = getTotalPages(sourceData, appState, PAGE_SIZE);
   
   if (appState.page < totalPages) {
@@ -276,9 +287,10 @@ document.getElementById('nextBtn').addEventListener('click', () => {
   }
 });
 
-// ─── Initializer ──────────────────────────────────────────────────
+// ─── Application Bootstrap ────────────────────────────────────────
 
-// Initialize sort UI active state
-document.querySelector('[data-sort="distance"]').classList.add('active', 'border-cyan-400', 'text-cyan-300', 'shadow-[0_0_8px_rgba(34,211,238,0.3)]');
+// Set initial Sort State cleanly
+updateActiveButton('.sort-btn', document.querySelector('[data-sort="distance"]'), ['active', 'bg-white/10', 'text-pearl'], ['text-muted']);
 
+// Initial fetch using current date
 loadAsteroids(getToday());
