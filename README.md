@@ -12,7 +12,7 @@ I built this because I wanted to see what asteroids are actually passing Earth t
 
 ## Live Demo
 
-🔗 [Check it out here](#) *(deploy link)*
+🔗 [Check it out here](https://shiveshsaini.github.io/neo-asteroid-tracker/) *(deploy link)*
 
 ---
 
