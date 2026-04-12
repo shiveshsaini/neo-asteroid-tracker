@@ -117,85 +117,126 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   outline-offset: 2px;
 }
 
-/* ─── LIGHT MODE OVERRIDES ─────────────────────────────────────── */
+/* ─── LIGHT MODE OVERRIDES ("Porcelain & Slate") ───────────────── */
 /* Smooth transition for theme shift */
-html, body, .stellar-card, .bento-box {
-  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+html, body, .stellar-card, .bento-box, select, input, button {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 html:not(.dark) body {
-  background-color: #f7f7f8; 
-  color: #111;
+  background-color: #f8fafc; /* slate-50 */
+  color: #0f172a; /* slate-900 */
 }
 
+/* Base Top-Nav & Hero Elements */
 html:not(.dark) .bg-obsidian,
 html:not(.dark) .bg-obsidian\/80 {
-  background-color: rgba(247, 247, 248, 0.9) !important;
+  background-color: rgba(248, 250, 252, 0.85) !important;
+  border-bottom: 1px solid #e2e8f0;
 }
 
+/* Bento Stats Top Row */
 html:not(.dark) .bg-surface\/60 {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.04);
 }
 
+/* Grids and Cards */
 html:not(.dark) .bg-surface\/50,
 html:not(.dark) .bg-surface\/40 {
-  background-color: rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.05);
 }
 
+/* Form controls & Buttons */
 html:not(.dark) .bg-charcoal\/50,
-html:not(.dark) .bg-charcoal\/30 {
-  background-color: rgba(240, 240, 242, 0.7) !important;
-}
-
-html:not(.dark) .text-pearl,
-html:not(.dark) .hover\:text-pearl:hover {
-  color: #111 !important;
-}
-
-html:not(.dark) .text-muted {
-  color: #6b7280 !important;
-}
-
-html:not(.dark) .border-white\/5,
-html:not(.dark) .border-white\/10 {
-  border-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-html:not(.dark) .border-white\/20,
-html:not(.dark) .hover\:border-white\/10:hover {
-  border-color: rgba(0, 0, 0, 0.15) !important;
-}
-
+html:not(.dark) .bg-charcoal\/30,
 html:not(.dark) .bg-white\/10 {
-  background-color: rgba(0, 0, 0, 0.05) !important;
+  background-color: #f1f5f9 !important; /* slate-100 */
 }
 
 html:not(.dark) .bg-white\/5,
 html:not(.dark) .hover\:bg-white\/5:hover {
-  background-color: rgba(0, 0, 0, 0.03) !important;
+  background-color: #e2e8f0 !important; /* slate-200 */
 }
 
+/* Typography Text Colors */
+html:not(.dark) .text-pearl,
+html:not(.dark) .hover\:text-pearl:hover,
+html:not(.dark) .group-hover\:text-pearl:hover {
+  color: #0f172a !important; /* slate-900 */
+}
+
+html:not(.dark) .text-muted {
+  color: #64748b !important; /* slate-500 */
+}
+
+/* Borders */
+html:not(.dark) .border-white\/5,
+html:not(.dark) .border-white\/10 {
+  border-color: #e2e8f0 !important; /* slate-200 */
+}
+
+html:not(.dark) .border-white\/20,
+html:not(.dark) .hover\:border-white\/10:hover,
+html:not(.dark) .hover\:border-white\/20:hover {
+  border-color: #cbd5e1 !important; /* slate-300 */
+}
+
+/* Specific Aesthetic Accents */
 html:not(.dark) canvas#starfield {
-  filter: invert(1);
-  opacity: 0.15;
+  filter: invert(1) opacity(0.3) blur(0.5px);
+  opacity: 0.1;
+}
+
+html:not(.dark) .stellar-card {
+  border-color: #e2e8f0 !important;
 }
 
 html:not(.dark) .stellar-card:hover {
-  background-color: rgba(255, 255, 255, 1) !important;
-  border-color: rgba(0, 0, 0, 0.15) !important;
-  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.08), 0 0 20px -5px rgba(0,0,0,0.03);
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.08), 0 4px 8px -4px rgba(15, 23, 42, 0.04);
 }
 
 html:not(.dark) .stellar-card:hover::after {
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0); /* Eliminate inner shadow in light mode */
 }
 
-html:not(.dark) .text-gold {
-  color: #b8860b !important;
+/* Enhance Gold readable on light surfaces */
+html:not(.dark) .text-gold,
+html:not(.dark) .hover\:text-gold:hover,
+html:not(.dark) .group-hover\:text-gold:hover {
+  color: #b45309 !important; /* amber-700 for distinct aerospace warning text */
 }
 
+html:not(.dark) .bg-gold {
+  background-color: #f59e0b !important; /* amber-500 background for threat levels */
+}
+
+html:not(.dark) .border-gold,
+html:not(.dark) .border-gold\/50 {
+  border-color: #fbbf24 !important; /* amber-400 */
+}
+
+/* Clean up Date picker in Light Mode */
 html:not(.dark) input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0) brightness(0.2);
+  filter: invert(0) brightness(0.4);
+}
+
+/* Redesign Hazard gradient background for better visibility */
+html:not(.dark) .threat-stripes {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.4),
+    rgba(255,255,255,0.4) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+}
+
+/* Pagination specific cleanly matched to slate */
+html:not(.dark) #prevBtn:disabled,
+html:not(.dark) #nextBtn:disabled {
+  opacity: 0.4;
 }
