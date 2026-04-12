@@ -27,8 +27,11 @@ theme.init();
 
 (function initStars() {
   const canvas = document.getElementById('starfield');
-  if (!canvas) return;
+  const pCanvas = document.getElementById('particles');
+  if (!canvas || !pCanvas) return;
+  
   const ctx = canvas.getContext('2d');
+  const pCtx = pCanvas.getContext('2d');
   
   let stars  = [];
   let particles = [];
@@ -36,6 +39,8 @@ theme.init();
   function resize() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
+    pCanvas.width = window.innerWidth;
+    pCanvas.height = window.innerHeight;
   }
 
   function createStars(count) {
@@ -54,17 +59,16 @@ theme.init();
     // Spawn 2-3 particles per mouse event
     const spawnCount = Math.floor(Math.random() * 2) + 2;
     for (let i = 0; i < spawnCount; i++) {
-        // Theme aware colors (Deep Google Blue or Pearl/Gold depending on theme, handled dynamically by using neutral-cool luminescence)
         const isDark = document.documentElement.classList.contains('dark');
-        const hue = isDark ? (Math.random() * 40 + 30) : (Math.random() * 40 + 200); // Gold/Amber in dark, Blue/Cyan in light
+        const hue = isDark ? (Math.random() * 40 + 30) : (Math.random() * 40 + 200); 
 
         particles.push({
             x: e.clientX,
             y: e.clientY,
             vx: (Math.random() - 0.5) * 1.5,
             vy: (Math.random() - 0.5) * 1.5,
-            life: 1.0,                     // Alpha fades from 1 -> 0
-            decay: Math.random() * 0.015 + 0.015, // ~1 second decay at 60fps
+            life: 1.0,                     
+            decay: Math.random() * 0.015 + 0.015,
             size: Math.random() * 2 + 1,
             hue: hue
         });
@@ -73,9 +77,10 @@ theme.init();
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
     
-    // 1. Draw Background Stars
-    ctx.shadowBlur = 0; // Prevent stars from glowing to save performance
+    // 1. Draw Background Stars (Suppressed by CSS in Light Mode)
+    ctx.shadowBlur = 0;
     stars.forEach(s => {
       s.flicker += s.speed;
       const a = 0.2 + Math.abs(Math.sin(s.flicker)) * 0.6;
@@ -85,7 +90,7 @@ theme.init();
       ctx.fill();
     });
 
-    // 2. Draw Interactive Particles
+    // 2. Draw Interactive Particles (Unsuppressed)
     for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
         p.x += p.vx;
@@ -97,12 +102,12 @@ theme.init();
             continue;
         }
 
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = `hsla(${p.hue}, 100%, 60%, ${p.life})`;
-        ctx.fillStyle = `hsla(${p.hue}, 100%, 80%, ${p.life})`;
-        ctx.fill();
+        pCtx.beginPath();
+        pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        pCtx.shadowBlur = 15;
+        pCtx.shadowColor = `hsla(${p.hue}, 100%, 60%, ${p.life})`;
+        pCtx.fillStyle = `hsla(${p.hue}, 100%, 80%, ${p.life})`;
+        pCtx.fill();
     }
 
     requestAnimationFrame(draw);
