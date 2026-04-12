@@ -12,7 +12,7 @@ A sophisticated, ultra-modern Near-Earth Object (NEO) surveillance dashboard eng
 
 ## ✨ Cutting-Edge Features
 
-- **Google Antigravity Light Theme**: A stunning paradigm shift transitioning from a dark "Obsidian" mission-control UI to a pristine, light "Glassmorphism" interface mimicking cutting-edge conceptual AI Dashboards. Features an animated iridescent color mesh and deep frosted glass (`backdrop-filter`) rendering.
+- **Prism Glass Light Theme**: A stunning paradigm shift transitioning from a dark "Obsidian" mission-control UI to a pristine, light "Glassmorphism" interface mimicking cutting-edge conceptual AI Dashboards. Features an animated iridescent color mesh and deep frosted glass (`backdrop-filter`) rendering.
 - **Interactive HTML5 Canvas Particles**: Features a custom-built vanilla JS Canvas engine tracking your mouse movements, spawning theme-contextual, physically drifting, and dissolving glowing trace particles completely independent of UI layering blockages. 
 - **Real-Time Telemetry Data**: Integrates directly with NASA's live tracking algorithms caching optimally in `localStorage`.
 - **Pure Functional Data Pipeline**: All internal arrays (sorting, searching, pagination, filtering) strictly utilize Higher-Order Functions (`.map()`, `.filter()`, `.reduce()`, `.slice()`, `.sort()`). No primitive `for` or `while` loops are ever used.

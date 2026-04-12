@@ -117,7 +117,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   outline-offset: 2px;
 }
 
-/* ─── GOOGLE ANTIGRAVITY LIGHT THEME ───────────────────────────── */
+/* ─── PRISM GLASS LIGHT THEME ───────────────────────────── */
 /* Smooth transition for theme shift */
 html, body, .stellar-card, .bento-box, select, input, button {
   transition: background-color 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
@@ -125,33 +125,33 @@ html, body, .stellar-card, .bento-box, select, input, button {
 }
 
 html:not(.dark) body {
-  background-color: #f4f6f9; /* Icy smooth Google background */
-  color: #202124; /* Google Dark Grey */
+  background-color: #f4f6f9; /* Icy smooth background */
+  color: #202124; /* Deep Dark Grey */
 }
 
-/* 1. Antigravity Iridescent Animated Background Orbs */
+/* 1. Iridescent Animated Background Orbs */
 html:not(.dark) .bg-gold\/5 {
-  background-color: rgba(66, 133, 244, 0.15) !important; /* Google Blue */
+  background-color: rgba(66, 133, 244, 0.15) !important; /* Deep Azure */
   width: 70%; height: 70%;
   top: -10%; left: -10%;
   filter: blur(150px);
   animation: agFloat1 25s infinite alternate ease-in-out;
 }
 html:not(.dark) .bg-emerald\/5 {
-  background-color: rgba(234, 67, 53, 0.12) !important; /* Google Red/Coral */
+  background-color: rgba(234, 67, 53, 0.12) !important; /* Deep Coral */
   width: 70%; height: 60%;
   bottom: -10%; right: -10%;
   filter: blur(140px);
   animation: agFloat2 20s infinite alternate ease-in-out;
 }
 
-/* Pseudo element for the Gemini Purple blend */
+/* Pseudo element for the Deep Purple blend */
 html:not(.dark)::before {
   content: '';
   position: fixed;
   top: 30%; right: 15%;
   width: 50%; height: 50%;
-  background-color: rgba(161, 66, 244, 0.12); /* DeepMind Purple */
+  background-color: rgba(161, 66, 244, 0.12); /* Deep Purple */
   filter: blur(160px);
   border-radius: 50%;
   z-index: -1;
@@ -182,7 +182,7 @@ html:not(.dark) .bg-surface\/40 {
   box-shadow: 0 4px 20px -2px rgba(32, 33, 36, 0.05), inset 0 1px 0 rgba(255,255,255,1);
 }
 
-/* Controls & Buttons (Google Pill style) */
+/* Controls & Buttons (Pill style) */
 html:not(.dark) .bg-charcoal\/50,
 html:not(.dark) .bg-charcoal\/30,
 html:not(.dark) .bg-white\/10 {
@@ -195,7 +195,7 @@ html:not(.dark) .hover\:bg-white\/5:hover {
   background-color: rgba(240, 244, 248, 0.9) !important;
 }
 
-/* 3. Typography alignment to Google Standards */
+/* 3. Typography alignment to Clean Standards */
 html:not(.dark) .text-pearl,
 html:not(.dark) .hover\:text-pearl:hover,
 html:not(.dark) .group-hover\:text-pearl:hover {
@@ -203,7 +203,7 @@ html:not(.dark) .group-hover\:text-pearl:hover {
 }
 
 html:not(.dark) .text-muted {
-  color: #5f6368 !important; /* Standard Google Gray */
+  color: #5f6368 !important; /* Standard Slate Gray */
 }
 
 html:not(.dark) .border-white\/5,
@@ -232,10 +232,10 @@ html:not(.dark) canvas#starfield {
   opacity: 0.1; /* Super subtle structural dust */
 }
 
-/* Push accent elements to Google Blue and Amber */
+/* Push accent elements to Deep Azure and Amber */
 html:not(.dark) .text-gold,
 html:not(.dark) .hover\:text-gold:hover {
-  color: #1a73e8 !important; /* Shift generic gold to Deep Google Blue */
+  color: #1a73e8 !important; /* Shift generic gold to Deep Azure */
 }
 
 html:not(.dark) .text-emerald { color: #34a853 !important; }
@@ -247,15 +247,15 @@ html:not(.dark) .bg-crimson { background-color: #ea4335 !important; }
 
 html:not(.dark) .border-gold, html:not(.dark) .border-gold\/50 { border-color: #4285f4 !important; }
 
-/* Closest Asteroid Gold breathing shifted to Google Blue/Purple in Light Mode */
-@keyframes breathingDeepMind {
+/* Closest Asteroid Gold breathing shifted to Azure/Purple in Light Mode */
+@keyframes breathingPulse {
   0%   { box-shadow: 0 0 0 0px rgba(66,133,244, 0.0); border-color: rgba(66,133,244, 0.3); }
   50%  { box-shadow: 0 0 35px 0px rgba(161,66,244, 0.15); border-color: rgba(161,66,244, 0.8); }
   100% { box-shadow: 0 0 0 0px rgba(66,133,244, 0.0); border-color: rgba(66,133,244, 0.3); }
 }
 
 html:not(.dark) .closest-highlight {
-  animation: card-entry 0.6s cubic-bezier(0.16, 1, 0.3, 1) both, breathingDeepMind 5s ease-in-out infinite !important;
+  animation: card-entry 0.6s cubic-bezier(0.16, 1, 0.3, 1) both, breathingPulse 5s ease-in-out infinite !important;
   border-color: rgba(66,133,244, 0.4) !important;
 }
 
