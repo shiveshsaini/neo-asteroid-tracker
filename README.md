@@ -1,12 +1,12 @@
 # 🛰️ Stellar Atlas — Orbital Surveillance Network
 
 <p align="center">
-  <strong><a href="https://shiveshsaini.github.io/neo-asteroid-tracker">🚀 EXPLORE THE LIVE DEPLOYMENT (DEMO) 🚀</a></strong>
+  <strong><a href="https://shiveshsaini.github.io/Stellar-Atlas/">🚀 EXPLORE THE LIVE DEPLOYMENT (DEMO) 🚀</a></strong>
 </p>
 
 A sophisticated, ultra-modern Near-Earth Object (NEO) surveillance dashboard engineered strictly using vanilla JavaScript, HTML5 Canvas, and Tailwind CSS. Powered by the **NASA JPL NeoWs API**, this project tracks asteroids in real-time to analyze trajectories, velocities, and threat vectors.
 
-![Stellar Atlas Preview](./preview.png) *(Note: Please add screenshot here)*
+![Stellar Atlas Preview](./image.png)
 
 ---
 
